@@ -67,7 +67,13 @@ async function main(outputDirectory) {
 				outputDirectory : path.join(outputDirectory, tag || `untagged`)
 
 			if (trashed) {
-				return fs.unlink(path.join(destinationDirectory, filename))
+				const filePath = path.join(destinationDirectory, filename)
+
+				fs.stat(filePath).then(() => {
+					return fs.unlink(filePath)
+				}).catch(err => {
+					return Promise.resolve()
+				})
 			}
 
 			return fs.writeFile(path.join(destinationDirectory, filename), text, { encoding: `utf8` })
